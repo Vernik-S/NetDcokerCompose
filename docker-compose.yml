@@ -1,0 +1,49 @@
+version: "3"
+
+
+volumes:
+  postgres_data:
+  static:
+  media:
+  nginx_conf:
+
+services:
+  db:
+    image: postgres:12.4
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+      
+      
+  django:
+    image: stocks_products:postgres
+    build: ./code
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - static:/code/static
+      - media:/code/media
+      - nginx_conf:/code/nginx
+    expose:
+      - 8080
+      
+      
+  nginx:
+    image: nginx:1.19.0-alpine
+    #build: ./nginx
+    depends_on:
+      - django
+    ports:
+      - "81:80"
+    volumes:
+      - static:/code/static
+      - media:/code/media
+      - nginx_conf:/etc/nginx/conf.d/
+
+    restart: always
+  
