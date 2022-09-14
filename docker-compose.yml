@@ -18,8 +18,8 @@ services:
       
       
   django:
-    image: stocks_products:postgres
-    build: ./code
+    image: eggd177/stocks_products:postgres
+    #build: ./code
     depends_on:
       - db
     restart: always
